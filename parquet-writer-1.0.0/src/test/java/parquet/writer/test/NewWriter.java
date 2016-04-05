@@ -17,6 +17,7 @@ import org.apache.parquet.schema.MessageTypeParser;
 import org.junit.Test;
 
 import org.apache.parquet.example.data.Group;
+import org.apache.parquet.hadoop.metadata.CompressionCodecName;
 
 public class NewWriter {
 	private static final Log LOG = Log.getLog(NewWriter.class);
@@ -64,7 +65,9 @@ public class NewWriter {
 		Path path = new Path(outputParquetFile.toURI());
 
 		MessageType schema = MessageTypeParser.parseMessageType(rawSchema);
-		CsvParquetWriter writer = new CsvParquetWriter(path, schema, enableDictionary);
+		//CsvParquetWriter writer = new CsvParquetWriter(path, schema, enableDictionary);
+		
+		CsvParquetWriter writer = new CsvParquetWriter(path, schema, CompressionCodecName.UNCOMPRESSED, enableDictionary);
 
 		BufferedReader br = new BufferedReader(new FileReader(csvFile));
 		String line;
