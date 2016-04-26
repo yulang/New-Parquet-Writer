@@ -50,6 +50,8 @@ public class CsvWriteSupport extends WriteSupport<List<String>> {
 
   @Override
   public void write(List<String> values) {
+	  System.out.println(cols.size());
+	  System.out.println(values.size());
     if (values.size() != cols.size()) {
       throw new ParquetEncodingException("Invalid input data. Expecting " +
           cols.size() + " columns. Input had " + values.size() + " columns (" + cols + ") : " + values);

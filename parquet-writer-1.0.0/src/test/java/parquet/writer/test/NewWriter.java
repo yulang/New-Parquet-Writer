@@ -22,7 +22,7 @@ import org.apache.parquet.hadoop.metadata.CompressionCodecName;
 public class NewWriter {
 	private static final Log LOG = Log.getLog(NewWriter.class);
 
-	public static final String CSV_DELIMITER= "|";
+	public static final String CSV_DELIMITER= ",";
 
 	private static String readFile(String path) throws IOException {
 		BufferedReader reader = new BufferedReader(new FileReader(path));
@@ -74,8 +74,10 @@ public class NewWriter {
 		int lineNumber = 0;
 		try {
 			while ((line = br.readLine()) != null) {
-				String[] fields = line.split(Pattern.quote(CSV_DELIMITER));
-				String[] compactFields = new String[fields.length];
+				String[] fields = line.split(Pattern.quote(CSV_DELIMITER), -1);
+				//for( String st : fields)
+				//	System.out.println(st);
+				//String[] compactFields = new String[fields.length];
 				//for (int i = 0; i < fields.length; ++i) {
 					//if(i == 1)
 					//	compactFields[i] = compactString(fields[i]);
@@ -97,8 +99,8 @@ public class NewWriter {
 	
 	@Test
 	public void test() throws IOException {
-		File inFile = new File("/Users/LangYu/tmp/test.csv");
-		File outFile = new File("/Users/LangYu/tmp/out.par");
+		File inFile = new File("/home/langyu/db_data/test.csv");
+		File outFile = new File("/home/langyu/db_data/crime.par");
 		System.out.println("Convert");
 		convertCsvToParquet(inFile, outFile);
 		System.out.println("Succeed");
