@@ -33,4 +33,6 @@ message m {
 }
 
 ```
+###TODO
 
+* Support for FIXED_LEN_BYTE_ARRAY type

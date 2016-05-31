@@ -52,6 +52,8 @@ public class NewWriter {
 
 	public static void convertCsvToParquet(File csvFile, File outputParquetFile) throws IOException {
 		convertCsvToParquet(csvFile, outputParquetFile, false);
+		//convertCsvToParquet(csvFile, outputParquetFile, true);
+
 	}
 
 	public static void convertCsvToParquet(File csvFile, File outputParquetFile, boolean enableDictionary) throws IOException {
@@ -74,7 +76,8 @@ public class NewWriter {
 		int lineNumber = 0;
 		try {
 			while ((line = br.readLine()) != null) {
-				String[] fields = line.split(Pattern.quote(CSV_DELIMITER), -1);
+				//String[] fields = line.split(Pattern.quote(CSV_DELIMITER), -1);
+				String[] fields = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)", -1);
 				//for( String st : fields)
 				//	System.out.println(st);
 				//String[] compactFields = new String[fields.length];
@@ -99,8 +102,10 @@ public class NewWriter {
 	
 	@Test
 	public void test() throws IOException {
-		File inFile = new File("/home/langyu/db_data/test.csv");
-		File outFile = new File("/home/langyu/db_data/crime.par");
+		String fileName = "crime";
+		String dataPath = "/home/langyu/db_data/";
+		File inFile = new File(dataPath + fileName + ".csv");
+		File outFile = new File(dataPath + fileName + ".par");
 		System.out.println("Convert");
 		convertCsvToParquet(inFile, outFile);
 		System.out.println("Succeed");
