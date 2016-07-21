@@ -50,8 +50,13 @@ public class NewWriter {
 		return readFile(schemaFile.getAbsolutePath());
 	}
 
-	public static void convertCsvToParquet(File csvFile, File outputParquetFile) throws IOException {
-		convertCsvToParquet(csvFile, outputParquetFile, false);
+	public static String getSchema(String pathToSchema) throws IOException {
+		File schemaFile = new File(pathToSchema);
+		return readFile(schemaFile.getAbsolutePath());
+	}
+
+	public static void convertCsvToParquet(File csvFile, File schemaFile, File outputParquetFile) throws IOException {
+		convertCsvToParquet(csvFile, schemaFile, outputParquetFile, false);
 		//convertCsvToParquet(csvFile, outputParquetFile, true);
 
 	}
@@ -99,15 +104,50 @@ public class NewWriter {
 		} 
 	}
 
+	public static void convertCsvToParquet(File csvFile, File schemaFile, File outputParquetFile, boolean enableDictionary) throws IOException {
+		LOG.info("Converting " + csvFile.getName() + " to " + outputParquetFile.getName());
+		String rawSchema = getSchema(schemaFile.getAbsolutePath());
+		if(outputParquetFile.exists()) {
+			throw new IOException("Output file " + outputParquetFile.getAbsolutePath() + 
+					" already exists");
+		}
+
+		Path path = new Path(outputParquetFile.toURI());
+
+		MessageType schema = MessageTypeParser.parseMessageType(rawSchema);
+		//CsvParquetWriter writer = new CsvParquetWriter(path, schema, enableDictionary);
+		
+		CsvParquetWriter writer = new CsvParquetWriter(path, schema, CompressionCodecName.UNCOMPRESSED, enableDictionary);
+
+		BufferedReader br = new BufferedReader(new FileReader(csvFile));
+		String line;
+		int lineNumber = 0;
+		try {
+			while ((line = br.readLine()) != null) {
+				//String[] fields = line.split(Pattern.quote(CSV_DELIMITER), -1);
+				String[] fields = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)", -1);
+				writer.write(Arrays.asList(fields));
+				//writer.write(Arrays.asList(compactFields));
+				++lineNumber;
+			}
+
+			writer.close();
+		} finally {
+			LOG.info("Number of lines: " + lineNumber);
+			Utils.closeQuietly(br);
+		} 
+	}
+
 	
 	@Test
 	public void test() throws IOException {
-		String fileName = "crime";
-		String dataPath = "/home/langyu/db_data/";
+		String fileName = "dist";
+		String dataPath = "/home/langyu/db_data/self_gen/";
 		File inFile = new File(dataPath + fileName + ".csv");
+		File schemaFile = new File(dataPath + "dist.schema");
 		File outFile = new File(dataPath + fileName + ".par");
 		System.out.println("Convert");
-		convertCsvToParquet(inFile, outFile);
+		convertCsvToParquet(inFile, schemaFile, outFile);
 		System.out.println("Succeed");
 		return;
 	}
