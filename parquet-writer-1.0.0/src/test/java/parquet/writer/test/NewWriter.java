@@ -141,8 +141,8 @@ public class NewWriter {
 	
 	@Test
 	public void test() throws IOException {
-		String fileName = "dist";
-		String dataPath = "/home/langyu/db_data/self_gen/";
+		String fileName = "beat_sort";
+		String dataPath = "/home/langyu/workloads/db_data/self_gen/";
 		File inFile = new File(dataPath + fileName + ".csv");
 		File schemaFile = new File(dataPath + "dist.schema");
 		File outFile = new File(dataPath + fileName + ".par");
